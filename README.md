@@ -1,2 +1,2 @@
-# Projet_Flask
-Projet Flask 2018 IoT - Ingésup Bordeaux
+# CoursIoT
+Cours d'IoT - Ingésup 2ème année - 2017/2018
