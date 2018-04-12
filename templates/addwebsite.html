@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+
+{% block titre %}
+    Ajouter un site
+{% endblock %}
+
+{% block body %}
+<h1>Ajouter un site à monitorer</h1>
+<p>Adresse du site</p>
+    <form action="" method="POST">
+        <input name="name" type="text" placeholder="http://example.com" />
+      </br></br><button>Ajouter</button>
+    </form>
+    {% if name %}
+  </br>
+        Votre site web {{ name }}, a bien été ajouté et il a le code {{ stat }}!
+    {% endif %}
+{% endblock %}

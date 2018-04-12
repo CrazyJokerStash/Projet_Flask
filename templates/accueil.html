@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+
+{% block titre %}
+    Accueil
+{% endblock %}
+
+{% block body %}
+  <div id="titre">
+    <h1>Liste des sites</h1>
+  </div>
+    <ul>
+        {% for statue in status %}
+        <div id="titre">
+            <li>{{ statue.0 }} {{ statue.1 }}</li>
+        </div>
+        {% endfor %}
+    </ul>
+    <div class="bouton">
+      <p>
+        <a href="/admin/modif">modifier</a>
+      </p>
+    </div>
+{% endblock %}

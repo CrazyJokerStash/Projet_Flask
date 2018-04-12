@@ -16,27 +16,60 @@ def connect_db () :
         password = app.config['DATABASE_PASSWORD'],
         database = app.config['DATABASE_NAME']
     )
-
-
-    g.mysql_cursor = g.mysql_connection.cursor()
-    return g.mysql_cursor
+    return g.mysql_connection
 
 def get_db () :
     if not hasattr(g, 'db') :
         g.db = connect_db()
         return g.db
 
-@app.route('/show-entries/')
-def show_entries () :
+@app.route('/accueil/', methods=['GET'])
+def accueil ():
     db = get_db()
-    db.execute('SELECT name, value FROM entries')
-    entries = db.fetchall()
-    return render_template('show-entries.html', entries = entries)
+    cur = db.cursor()
+    cur.execute('SELECT id, name, States FROM WebSites')
+    status = cur.fetchall()
+    return render_template('accueil.html', status = status)
+
+@app.route('/admin/modif/')
+def modif ():
+    if not session.get('user') or not session.get('user')[2] :
+        return redirect(url_for('login'))
+
+    return render_template('modif.html')
+
+@app.route('/admin/suppr/', methods = ['GET', 'POST'])
+def suppr ():
+    if not session.get('user') or not session.get('user')[2] :
+        return redirect(url_for('login'))
+    suppr = request.form.get('suppr')
+    if suppr == None :
+        return render_template('suppr.html')
+    else :
+        db = get_db()
+        cur = db.cursor()
+        cur.execute('DELETE FROM WebSites WHERE name=(%s)', (suppr,))
+        db.commit()
+        return render_template('accueil.html')
 
 @app.teardown_appcontext
 def close_db (error) :
     if hasattr(g, 'db') :
         g.db.close()
+
+@app.route('/admin/add/', methods = ['GET', 'POST'])
+def ajout () :
+    if not session.get('user') or not session.get('user')[2] :
+        return redirect(url_for('login'))
+    name = request.form.get('name')
+    if name == None :
+        return render_template('addwebsite.html')
+    else :
+        db = get_db()
+        cur = db.cursor()
+        cur.execute('INSERT INTO WebSites (name) VALUES (%s)', (name,))
+        db.commit()
+        return render_template('accueil.html')
 
 @app.route('/login/', methods = ['GET', 'POST'])
 def login () :
@@ -44,8 +77,9 @@ def login () :
     password = str(request.form.get('password'))
 
     db = get_db()
-    db.execute('SELECT email, password, is_admin FROM user WHERE email = %(email)s', {'email' : email})
-    users = db.fetchall()
+    cur = db.cursor()
+    cur.execute('SELECT email, password, is_admin FROM user WHERE email = %(email)s', {'email' : email})
+    users = cur.fetchall()
 
     valid_user = False
     for user in users :
@@ -69,7 +103,6 @@ def admin () :
 def admin_logout () :
     session.clear()
     return redirect(url_for('login'))
-
 
 
 if __name__ == '__main__':
