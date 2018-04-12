@@ -50,7 +50,7 @@ def suppr ():
         cur = db.cursor()
         cur.execute('DELETE FROM WebSites WHERE name=(%s)', (suppr,))
         db.commit()
-        return render_template('accueil.html')
+        return render_template('suppr.html')
 
 @app.teardown_appcontext
 def close_db (error) :
@@ -69,7 +69,7 @@ def ajout () :
         cur = db.cursor()
         cur.execute('INSERT INTO WebSites (name) VALUES (%s)', (name,))
         db.commit()
-        return render_template('accueil.html')
+        return render_template('addwebsite.html')
 
 @app.route('/login/', methods = ['GET', 'POST'])
 def login () :
